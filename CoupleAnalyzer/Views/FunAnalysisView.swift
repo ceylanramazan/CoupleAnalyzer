@@ -258,28 +258,32 @@ struct ConversationStatsCard: View {
                     title: "Toplam Konuşma Günü",
                     value: "\(funStats.totalConversationDays) gün",
                     icon: "calendar",
-                    color: Color.blue
+                    color: Color.blue,
+                    delay: 0.1
                 )
                 
                 StatRow(
                     title: "Ortalama Mesaj/Gün",
                     value: String(format: "%.1f", funStats.averageMessagesPerDay),
                     icon: "message.fill",
-                    color: Color.green
+                    color: Color.green,
+                    delay: 0.2
                 )
                 
                 StatRow(
                     title: "En Uzun Seri",
                     value: "\(funStats.longestStreak) gün",
                     icon: "flame.fill",
-                    color: Color.orange
+                    color: Color.orange,
+                    delay: 0.3
                 )
                 
                 StatRow(
                     title: "En Uzun Sessizlik",
                     value: "\(funStats.longestSilence) gün",
                     icon: "moon.fill",
-                    color: Color.purple
+                    color: Color.purple,
+                    delay: 0.4
                 )
             }
         }

@@ -3,50 +3,97 @@ import Charts
 
 struct WordAnalysisView: View {
     let analysisResult: ChatAnalysisResult
+    @State private var animateCards = false
+    @State private var selectedWordIndex: Int? = nil
     
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 20) {
-                // Word overview
-                WordOverviewCard(wordAnalysis: analysisResult.wordAnalysis)
+            LazyVStack(spacing: 24) {
+                // Word overview with enhanced animations
+                WordOverviewCard(wordAnalysis: analysisResult.wordAnalysis, delay: 0.1)
+                    .scaleEffect(animateCards ? 1.0 : 0.95)
+                    .opacity(animateCards ? 1.0 : 0.0)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1), value: animateCards)
                 
-                // Most used words
-                MostUsedWordsCard(wordAnalysis: analysisResult.wordAnalysis)
+                // Most used words with interactive elements
+                MostUsedWordsCard(wordAnalysis: analysisResult.wordAnalysis, selectedIndex: $selectedWordIndex, delay: 0.2)
+                    .scaleEffect(animateCards ? 1.0 : 0.95)
+                    .opacity(animateCards ? 1.0 : 0.0)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.2), value: animateCards)
                 
-                // Love words analysis
-                LoveWordsCard(wordAnalysis: analysisResult.wordAnalysis)
+                // Love words analysis with romantic animations
+                LoveWordsCard(wordAnalysis: analysisResult.wordAnalysis, delay: 0.3)
+                    .scaleEffect(animateCards ? 1.0 : 0.95)
+                    .opacity(animateCards ? 1.0 : 0.0)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.3), value: animateCards)
                 
-                // Sentiment analysis
-                WordSentimentCard(sentimentAnalysis: analysisResult.sentimentAnalysis)
+                // Sentiment analysis with enhanced visuals
+                WordSentimentCard(sentimentAnalysis: analysisResult.sentimentAnalysis, delay: 0.4)
+                    .scaleEffect(animateCards ? 1.0 : 0.95)
+                    .opacity(animateCards ? 1.0 : 0.0)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.4), value: animateCards)
                 
-                // Most repeated phrase
-                MostRepeatedPhraseCard(wordAnalysis: analysisResult.wordAnalysis)
+                // Most repeated phrase with highlight effect
+                MostRepeatedPhraseCard(wordAnalysis: analysisResult.wordAnalysis, delay: 0.5)
+                    .scaleEffect(animateCards ? 1.0 : 0.95)
+                    .opacity(animateCards ? 1.0 : 0.0)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.5), value: animateCards)
                 
-                // Sender word usage
-                SenderWordUsageCard(wordAnalysis: analysisResult.wordAnalysis)
+                // Sender word usage with comparison charts
+                SenderWordUsageCard(wordAnalysis: analysisResult.wordAnalysis, delay: 0.6)
+                    .scaleEffect(animateCards ? 1.0 : 0.95)
+                    .opacity(animateCards ? 1.0 : 0.0)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.6), value: animateCards)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 20)
+        }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 0.8).delay(0.3)) {
+                animateCards = true
+            }
         }
     }
 }
 
 struct WordOverviewCard: View {
     let wordAnalysis: WordAnalysis
+    let delay: Double
+    
+    @State private var animateStats = false
+    @State private var isPressed = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Kelime Genel Bakış")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Image(systemName: "text.bubble.fill")
+                    .font(.title2)
+                    .foregroundColor(.blue)
+                
+                Text("Kelime Genel Bakış")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+            }
             
             HStack(spacing: 20) {
                 VStack(spacing: 8) {
-                    Text("\(wordAnalysis.totalWords)")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.blue)
+                    ZStack {
+                        Circle()
+                            .fill(Color.blue.opacity(0.1))
+                            .frame(width: 60, height: 60)
+                            .scaleEffect(animateStats ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay), value: animateStats)
+                        
+                        Text("\(wordAnalysis.totalWords)")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.blue)
+                            .scaleEffect(animateStats ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay), value: animateStats)
+                    }
                     
                     Text("Toplam Kelime")
                         .font(.caption)
@@ -54,10 +101,20 @@ struct WordOverviewCard: View {
                 }
                 
                 VStack(spacing: 8) {
-                    Text(String(format: "%.1f", wordAnalysis.averageWordsPerMessage))
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.green)
+                    ZStack {
+                        Circle()
+                            .fill(Color.green.opacity(0.1))
+                            .frame(width: 60, height: 60)
+                            .scaleEffect(animateStats ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay + 0.1), value: animateStats)
+                        
+                        Text(String(format: "%.1f", wordAnalysis.averageWordsPerMessage))
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.green)
+                            .scaleEffect(animateStats ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay + 0.1), value: animateStats)
+                    }
                     
                     Text("Ortalama/Mesaj")
                         .font(.caption)
@@ -65,10 +122,20 @@ struct WordOverviewCard: View {
                 }
                 
                 VStack(spacing: 8) {
-                    Text("\(wordAnalysis.loveWordsCount)")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.pink)
+                    ZStack {
+                        Circle()
+                            .fill(Color.pink.opacity(0.1))
+                            .frame(width: 60, height: 60)
+                            .scaleEffect(animateStats ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay + 0.2), value: animateStats)
+                        
+                        Text("\(wordAnalysis.loveWordsCount)")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.pink)
+                            .scaleEffect(animateStats ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay + 0.2), value: animateStats)
+                    }
                     
                     Text("Sevgi Kelimesi")
                         .font(.caption)
@@ -77,64 +144,203 @@ struct WordOverviewCard: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .padding(20)
-        .background(Color.white.opacity(0.8))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .padding(24)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.9))
+                .shadow(color: Color.blue.opacity(0.1), radius: 12, x: 0, y: 6)
+        )
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
+        .onTapGesture {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                isPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    isPressed = false
+                }
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                animateStats = true
+            }
+        }
     }
 }
 
 struct MostUsedWordsCard: View {
     let wordAnalysis: WordAnalysis
+    @Binding var selectedIndex: Int?
+    let delay: Double
+    
+    @State private var animateWords = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("En Çok Kullanılan Kelimeler")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Image(systemName: "textformat.abc")
+                    .font(.title2)
+                    .foregroundColor(.orange)
+                
+                Text("En Çok Kullanılan Kelimeler")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+            }
             
             VStack(spacing: 12) {
-                ForEach(wordAnalysis.mostUsedWords.prefix(15), id: \.id) { wordUsage in
-                    HStack {
-                        Text(wordUsage.word.capitalized)
-                            .font(.subheadline)
-                            .foregroundColor(.primary)
-                        
-                        Spacer()
-                        
-                        Text("\(wordUsage.count)")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.vertical, 4)
+                ForEach(Array(wordAnalysis.mostUsedWords.prefix(10).enumerated()), id: \.element.id) { index, wordUsage in
+                    InteractiveWordRow(
+                        wordUsage: wordUsage,
+                        index: index,
+                        isSelected: selectedIndex == index,
+                        delay: delay + Double(index) * 0.05,
+                        onTap: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                selectedIndex = selectedIndex == index ? nil : index
+                            }
+                        }
+                    )
                 }
             }
         }
-        .padding(20)
-        .background(Color.white.opacity(0.8))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .padding(24)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.9))
+                .shadow(color: Color.orange.opacity(0.1), radius: 12, x: 0, y: 6)
+        )
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                animateWords = true
+            }
+        }
+    }
+}
+
+struct InteractiveWordRow: View {
+    let wordUsage: WordUsage
+    let index: Int
+    let isSelected: Bool
+    let delay: Double
+    let onTap: () -> Void
+    
+    @State private var animate = false
+    @State private var isPressed = false
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            // Rank indicator
+            ZStack {
+                Circle()
+                    .fill(isSelected ? Color.orange : Color.orange.opacity(0.1))
+                    .frame(width: 32, height: 32)
+                
+                Text("\(index + 1)")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(isSelected ? .white : .orange)
+            }
+            
+            // Word
+            Text(wordUsage.word.capitalized)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
+            
+            Spacer()
+            
+            // Count with progress bar
+            HStack(spacing: 8) {
+                Text("\(wordUsage.count)")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.orange)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.orange.opacity(0.1))
+                    )
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(isSelected ? Color.orange.opacity(0.1) : Color.clear)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(isSelected ? Color.orange.opacity(0.3) : Color.clear, lineWidth: 1)
+                )
+        )
+        .scaleEffect(animate ? 1.0 : 0.95)
+        .opacity(animate ? 1.0 : 0.0)
+        .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(delay), value: animate)
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .animation(.spring(response: 0.2, dampingFraction: 0.6), value: isPressed)
+        .onTapGesture {
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+                isPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+                    isPressed = false
+                }
+            }
+            onTap()
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                animate = true
+            }
+        }
     }
 }
 
 struct LoveWordsCard: View {
     let wordAnalysis: WordAnalysis
+    let delay: Double
+    
+    @State private var animateLove = false
+    @State private var heartBeat = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Sevgi Kelimeleri Analizi")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Image(systemName: "heart.fill")
+                    .font(.title2)
+                    .foregroundColor(.pink)
+                    .scaleEffect(heartBeat ? 1.2 : 1.0)
+                    .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true).delay(delay), value: heartBeat)
+                
+                Text("Sevgi Kelimeleri Analizi")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+            }
             
             HStack(spacing: 20) {
                 VStack(spacing: 8) {
-                    Text("\(wordAnalysis.loveWordsCount)")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.pink)
+                    ZStack {
+                        Circle()
+                            .fill(Color.pink.opacity(0.1))
+                            .frame(width: 60, height: 60)
+                            .scaleEffect(animateLove ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay), value: animateLove)
+                        
+                        Text("\(wordAnalysis.loveWordsCount)")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.pink)
+                            .scaleEffect(animateLove ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay), value: animateLove)
+                    }
                     
                     Text("Sevgi Kelimesi")
                         .font(.caption)
@@ -142,10 +348,20 @@ struct LoveWordsCard: View {
                 }
                 
                 VStack(spacing: 8) {
-                    Text("\(wordAnalysis.negativeWordsCount)")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.red)
+                    ZStack {
+                        Circle()
+                            .fill(Color.red.opacity(0.1))
+                            .frame(width: 60, height: 60)
+                            .scaleEffect(animateLove ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay + 0.1), value: animateLove)
+                        
+                        Text("\(wordAnalysis.negativeWordsCount)")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.red)
+                            .scaleEffect(animateLove ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay + 0.1), value: animateLove)
+                    }
                     
                     Text("Negatif Kelime")
                         .font(.caption)
@@ -153,10 +369,20 @@ struct LoveWordsCard: View {
                 }
                 
                 VStack(spacing: 8) {
-                    Text(String(format: "%.1f", wordAnalysis.positiveNegativeRatio))
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.green)
+                    ZStack {
+                        Circle()
+                            .fill(Color.green.opacity(0.1))
+                            .frame(width: 60, height: 60)
+                            .scaleEffect(animateLove ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay + 0.2), value: animateLove)
+                        
+                        Text(String(format: "%.1f", wordAnalysis.positiveNegativeRatio))
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.green)
+                            .scaleEffect(animateLove ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay + 0.2), value: animateLove)
+                    }
                     
                     Text("Pozitif/Negatif")
                         .font(.caption)
@@ -165,24 +391,44 @@ struct LoveWordsCard: View {
             }
             .frame(maxWidth: .infinity)
             
-            // Interpretation
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Yorum")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+            // Interpretation with enhanced styling
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.yellow)
+                    
+                    Text("Yorum")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                }
                 
                 Text(interpretLoveWordsRatio(wordAnalysis.positiveNegativeRatio))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.leading)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.yellow.opacity(0.1))
+                    )
             }
             .padding(.top, 8)
         }
-        .padding(20)
-        .background(Color.white.opacity(0.8))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .padding(24)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.9))
+                .shadow(color: Color.pink.opacity(0.1), radius: 12, x: 0, y: 6)
+        )
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                animateLove = true
+                heartBeat = true
+            }
+        }
     }
     
     private func interpretLoveWordsRatio(_ ratio: Double) -> String {
@@ -200,6 +446,7 @@ struct LoveWordsCard: View {
 
 struct WordSentimentCard: View {
     let sentimentAnalysis: SentimentAnalysis
+    let delay: Double
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -327,6 +574,7 @@ struct SentimentBar: View {
 
 struct MostRepeatedPhraseCard: View {
     let wordAnalysis: WordAnalysis
+    let delay: Double
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -374,6 +622,7 @@ struct MostRepeatedPhraseCard: View {
 
 struct SenderWordUsageCard: View {
     let wordAnalysis: WordAnalysis
+    let delay: Double
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {

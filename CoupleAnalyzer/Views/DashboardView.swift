@@ -6,85 +6,121 @@ struct DashboardView: View {
     let viewModel: ChatAnalyzerViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var selectedTab = 0
+    @State private var animateCards = false
+    @State private var showCelebration = false
     
     var body: some View {
         NavigationView {
             ZStack {
-                // Background
+                // Dynamic Background with Animation
                 LinearGradient(
                     gradient: Gradient(colors: [
-                        Color.pink.opacity(0.05),
-                        Color.purple.opacity(0.05),
-                        Color.blue.opacity(0.05)
+                        Color.pink.opacity(0.1),
+                        Color.purple.opacity(0.08),
+                        Color.blue.opacity(0.06),
+                        Color.cyan.opacity(0.04)
                     ]),
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea()
+                .animation(.easeInOut(duration: 3).repeatForever(autoreverses: true), value: animateCards)
                 
                 VStack(spacing: 0) {
-                    // Header with summary
-                    VStack(spacing: 16) {
+                    // Enhanced Header with Celebration
+                    VStack(spacing: 20) {
                         HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Analiz Tamamlandı!")
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.primary)
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack(spacing: 8) {
+                                    Text("🎉")
+                                        .font(.title)
+                                        .scaleEffect(showCelebration ? 1.2 : 1.0)
+                                        .animation(.spring(response: 0.6, dampingFraction: 0.6), value: showCelebration)
+                                    
+                                    Text("Analiz Tamamlandı!")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.primary)
+                                }
                                 
                                 Text("\(analysisResult.messages.count) mesaj analiz edildi")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
+                                
+                                // Analysis time
+                                HStack(spacing: 4) {
+                                    Image(systemName: "clock.fill")
+                                        .font(.caption)
+                                        .foregroundColor(.blue)
+                                    Text("Analiz süresi: \(String(format: "%.1f", analysisResult.totalAnalysisTime)) saniye")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
                             }
                             
                             Spacer()
                             
                             Button(action: {
-                                viewModel.dismissResults()
+                                withAnimation(.spring()) {
+                                    viewModel.dismissResults()
+                                }
                             }) {
                                 Image(systemName: "xmark.circle.fill")
                                     .font(.title2)
                                     .foregroundColor(.gray)
+                                    .scaleEffect(1.0)
+                                    .animation(.spring(response: 0.3), value: showCelebration)
                             }
                         }
                         
-                        // Quick stats
-                        HStack(spacing: 16) {
+                        // Enhanced Quick stats with animations
+                        HStack(spacing: 12) {
                             QuickStatCard(
                                 title: "En Aktif",
                                 value: viewModel.mostActiveSender,
                                 icon: "person.fill",
-                                color: Color.blue
+                                color: Color.blue,
+                                delay: 0.1
                             )
                             
                             QuickStatCard(
                                 title: "En Çok Emoji",
                                 value: analysisResult.emojiAnalysis.mostUsedEmoji,
                                 icon: "face.smiling",
-                                color: Color.orange
+                                color: Color.orange,
+                                delay: 0.2
                             )
                             
                             QuickStatCard(
                                 title: "Duygu",
                                 value: analysisResult.sentimentAnalysis.overallSentiment.emoji,
                                 icon: "heart.fill",
-                                color: Color.pink
+                                color: Color.pink,
+                                delay: 0.3
                             )
                         }
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 10)
                     
-                    // Tab selector
-                    Picker("Analiz Türü", selection: $selectedTab) {
-                        Text("Genel").tag(0)
-                        Text("Emoji").tag(1)
-                        Text("Kelime").tag(2)
-                        Text("İlişki").tag(3)
-                        Text("Eğlence").tag(4)
+                    // Modern Tab selector with icons
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(0..<5) { index in
+                                TabButton(
+                                    title: tabTitles[index],
+                                    icon: tabIcons[index],
+                                    isSelected: selectedTab == index,
+                                    action: {
+                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                            selectedTab = index
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                        .padding(.horizontal, 20)
                     }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding(.horizontal, 20)
                     .padding(.vertical, 16)
                     
                     // Content
@@ -109,6 +145,26 @@ struct DashboardView: View {
             }
             .navigationBarHidden(true)
         }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 0.8).delay(0.3)) {
+                animateCards = true
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
+                    showCelebration = true
+                }
+            }
+        }
+    }
+    
+    // MARK: - Computed Properties
+    private var tabTitles: [String] {
+        ["Genel", "Emoji", "Kelime", "İlişki", "Eğlence"]
+    }
+    
+    private var tabIcons: [String] {
+        ["chart.bar.fill", "face.smiling", "text.bubble.fill", "heart.fill", "gamecontroller.fill"]
     }
 }
 
@@ -117,12 +173,26 @@ struct QuickStatCard: View {
     let value: String
     let icon: String
     let color: Color
+    let delay: Double
+    
+    @State private var animate = false
+    @State private var isPressed = false
     
     var body: some View {
         VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(color)
+            ZStack {
+                Circle()
+                    .fill(color.opacity(0.1))
+                    .frame(width: 40, height: 40)
+                    .scaleEffect(animate ? 1.1 : 1.0)
+                    .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay), value: animate)
+                
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundColor(color)
+                    .scaleEffect(animate ? 1.1 : 1.0)
+                    .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true).delay(delay), value: animate)
+            }
             
             Text(value)
                 .font(.headline)
@@ -136,10 +206,81 @@ struct QuickStatCard: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .background(Color.white.opacity(0.8))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .padding(.vertical, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white.opacity(0.9))
+                .shadow(color: color.opacity(0.2), radius: 8, x: 0, y: 4)
+        )
+        .scaleEffect(isPressed ? 0.95 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
+        .onTapGesture {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                isPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    isPressed = false
+                }
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                animate = true
+            }
+        }
+    }
+}
+
+// MARK: - Tab Button
+struct TabButton: View {
+    let title: String
+    let icon: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    @State private var isPressed = false
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .medium))
+                
+                Text(title)
+                    .font(.system(size: 14, weight: .medium))
+            }
+            .foregroundColor(isSelected ? .white : .primary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(
+                        isSelected ? 
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.pink, Color.purple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ) : 
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.white.opacity(0.8)]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .shadow(
+                        color: isSelected ? Color.pink.opacity(0.3) : Color.black.opacity(0.1),
+                        radius: isSelected ? 8 : 4,
+                        x: 0,
+                        y: isSelected ? 4 : 2
+                    )
+            )
+        }
+        .scaleEffect(isPressed ? 0.95 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
+        .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+            isPressed = pressing
+        }, perform: {})
     }
 }
 
@@ -171,47 +312,69 @@ struct GeneralAnalysisView: View {
 struct MessageStatsCard: View {
     let stats: MessageStats
     
+    @State private var animateStats = false
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Mesaj İstatistikleri")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Image(systemName: "chart.bar.fill")
+                    .font(.title2)
+                    .foregroundColor(.blue)
+                
+                Text("Mesaj İstatistikleri")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+            }
             
-            VStack(spacing: 12) {
+            VStack(spacing: 16) {
                 StatRow(
                     title: "Toplam Mesaj",
                     value: "\(stats.totalMessages)",
                     icon: "message.fill",
-                    color: Color.blue
+                    color: Color.blue,
+                    delay: 0.1
                 )
                 
                 StatRow(
                     title: "Ortalama Uzunluk",
                     value: String(format: "%.1f karakter", stats.averageMessageLength),
                     icon: "text.alignleft",
-                    color: Color.green
+                    color: Color.green,
+                    delay: 0.2
                 )
                 
                 StatRow(
                     title: "En Aktif Saat",
                     value: "\(stats.mostActiveHour):00",
                     icon: "clock.fill",
-                    color: Color.orange
+                    color: Color.orange,
+                    delay: 0.3
                 )
                 
                 StatRow(
                     title: "En Aktif Gün",
                     value: stats.mostActiveDay,
                     icon: "calendar",
-                    color: Color.purple
+                    color: Color.purple,
+                    delay: 0.4
                 )
             }
         }
-        .padding(20)
-        .background(Color.white.opacity(0.8))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+        .padding(24)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.9))
+                .shadow(color: Color.blue.opacity(0.1), radius: 12, x: 0, y: 6)
+        )
+        .scaleEffect(animateStats ? 1.0 : 0.95)
+        .opacity(animateStats ? 1.0 : 0.0)
+        .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.2), value: animateStats)
+        .onAppear {
+            animateStats = true
+        }
     }
 }
 
@@ -220,24 +383,61 @@ struct StatRow: View {
     let value: String
     let icon: String
     let color: Color
+    let delay: Double
+    
+    @State private var animate = false
+    @State private var isPressed = false
     
     var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(color)
-                .frame(width: 24)
+        HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(color.opacity(0.1))
+                    .frame(width: 36, height: 36)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(color)
+            }
             
             Text(title)
                 .font(.subheadline)
+                .fontWeight(.medium)
                 .foregroundColor(.primary)
             
             Spacer()
             
             Text(value)
                 .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.secondary)
+                .fontWeight(.bold)
+                .foregroundColor(color)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(color.opacity(0.1))
+                )
+        }
+        .padding(.vertical, 8)
+        .scaleEffect(animate ? 1.0 : 0.95)
+        .opacity(animate ? 1.0 : 0.0)
+        .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(delay), value: animate)
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .animation(.spring(response: 0.2, dampingFraction: 0.6), value: isPressed)
+        .onTapGesture {
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+                isPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+                    isPressed = false
+                }
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                animate = true
+            }
         }
     }
 }
