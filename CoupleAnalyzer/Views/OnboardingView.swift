@@ -483,36 +483,40 @@ struct PremiumPreviewPlaceholder: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         // Enhanced Header
-                        HStack {
-                            Button(action: onDismiss) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "chevron.left")
-                                        .font(.system(size: 16, weight: .semibold))
-                                    Text("Geri")
-                                        .font(.system(size: 16, weight: .medium))
+                        VStack(spacing: 0) {
+                            // Top row with X button
+                            HStack {
+                                Spacer()
+                                
+                                // X Button
+                                Button(action: onDismiss) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.white.opacity(0.15))
+                                            .frame(width: 36, height: 36)
+                                        
+                                        Image(systemName: "xmark")
+                                            .font(.system(size: 18, weight: .medium))
+                                            .foregroundColor(.white)
+                                    }
                                 }
-                                .foregroundColor(.white)
                             }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 60)
+                            .padding(.bottom, 20)
                             
-                            Spacer()
-                            
-                            VStack(spacing: 4) {
+                            // Centered title
+                            VStack(spacing: 6) {
                                 Text("Premium")
-                                    .font(.system(size: 28, weight: .bold))
+                                    .font(.system(size: 32, weight: .bold))
                                     .foregroundColor(.white)
                                 
                                 Text("Sınırsız Özellikler")
-                                    .font(.system(size: 14, weight: .medium))
+                                    .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.white.opacity(0.8))
                             }
-                            
-                            Spacer()
-                            
-                            Color.clear
-                                .frame(width: 60)
+                            .padding(.bottom, 20)
                         }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 60)
                         
                         // Hero Section
                         VStack(spacing: 24) {
