@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1A2B3C4D5E6F7890 /* CoupleAnalyzerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7891 /* CoupleAnalyzerApp.swift */; };
-		1A2B3C4D5E6F7892 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7893 /* ContentView.swift */; };
 		1A2B3C4D5E6F7894 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7895 /* Assets.xcassets */; };
 		1A2B3C4D5E6F7896 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7897 /* Preview Assets.xcassets */; };
 		1A2B3C4D5E6F7898 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7899 /* ChatMessage.swift */; };
@@ -16,7 +15,6 @@
 		1A2B3C4D5E6F789C /* WordAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F789D /* WordAnalysis.swift */; };
 		1A2B3C4D5E6F789E /* RelationshipAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F789F /* RelationshipAnalysis.swift */; };
 		1A2B3C4D5E6F78A0 /* MessageAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F78A1 /* MessageAnalyzer.swift */; };
-		1A2B3C4D5E6F78A2 /* EmojiAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F78A3 /* EmojiAnalyzer.swift */; };
 		1A2B3C4D5E6F78A4 /* WordAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F78A5 /* WordAnalyzer.swift */; };
 		1A2B3C4D5E6F78A6 /* RelationshipAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F78A7 /* RelationshipAnalyzer.swift */; };
 		1A2B3C4D5E6F78A8 /* WhatsAppParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F78A9 /* WhatsAppParser.swift */; };
@@ -32,7 +30,6 @@
 
 /* Begin PBXFileReference section */
 		1A2B3C4D5E6F7891 /* CoupleAnalyzerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoupleAnalyzerApp.swift; sourceTree = "<group>"; };
-		1A2B3C4D5E6F7893 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F7895 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1A2B3C4D5E6F7897 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1A2B3C4D5E6F78BA /* CoupleAnalyzer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoupleAnalyzer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -41,7 +38,6 @@
 		1A2B3C4D5E6F789D /* WordAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordAnalysis.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F789F /* RelationshipAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipAnalysis.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F78A1 /* MessageAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAnalyzer.swift; sourceTree = "<group>"; };
-		1A2B3C4D5E6F78A3 /* EmojiAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAnalyzer.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F78A5 /* WordAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordAnalyzer.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F78A7 /* RelationshipAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipAnalyzer.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F78A9 /* WhatsAppParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsAppParser.swift; sourceTree = "<group>"; };
@@ -70,7 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				1A2B3C4D5E6F7891 /* CoupleAnalyzerApp.swift */,
-				1A2B3C4D5E6F7893 /* ContentView.swift */,
 				1A2B3C4D5E6F78BD /* Models */,
 				1A2B3C4D5E6F78BE /* Services */,
 				1A2B3C4D5E6F78BF /* ViewModels */,
@@ -120,7 +115,6 @@
 			isa = PBXGroup;
 			children = (
 				1A2B3C4D5E6F78A1 /* MessageAnalyzer.swift */,
-				1A2B3C4D5E6F78A3 /* EmojiAnalyzer.swift */,
 				1A2B3C4D5E6F78A5 /* WordAnalyzer.swift */,
 				1A2B3C4D5E6F78A7 /* RelationshipAnalyzer.swift */,
 				1A2B3C4D5E6F78A9 /* WhatsAppParser.swift */,
@@ -220,14 +214,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A2B3C4D5E6F7892 /* ContentView.swift in Sources */,
 				1A2B3C4D5E6F7890 /* CoupleAnalyzerApp.swift in Sources */,
 				1A2B3C4D5E6F7898 /* ChatMessage.swift in Sources */,
 				1A2B3C4D5E6F789A /* EmojiAnalysis.swift in Sources */,
 				1A2B3C4D5E6F789C /* WordAnalysis.swift in Sources */,
 				1A2B3C4D5E6F789E /* RelationshipAnalysis.swift in Sources */,
 				1A2B3C4D5E6F78A0 /* MessageAnalyzer.swift in Sources */,
-				1A2B3C4D5E6F78A2 /* EmojiAnalyzer.swift in Sources */,
 				1A2B3C4D5E6F78A4 /* WordAnalyzer.swift in Sources */,
 				1A2B3C4D5E6F78A6 /* RelationshipAnalyzer.swift in Sources */,
 				1A2B3C4D5E6F78A8 /* WhatsAppParser.swift in Sources */,

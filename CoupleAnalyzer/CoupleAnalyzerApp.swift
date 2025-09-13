@@ -4,7 +4,7 @@ import SwiftUI
 struct CoupleAnalyzerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            OnboardingView()
         }
     }
 }

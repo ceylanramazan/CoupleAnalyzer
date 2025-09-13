@@ -170,6 +170,128 @@ class MessageAnalyzer {
         
         return (starterRatio, enderRatio)
     }
+    
+    // MARK: - Emoji Analysis
+    static func analyzeEmojis(_ messages: [ChatMessage]) -> EmojiAnalysis {
+        var emojiCounts: [String: Int] = [:]
+        var senderEmojiUsage: [String: [EmojiUsage]] = [:]
+        var emojiTrendOverTime: [Date: Int] = [:]
+        var categoryCounts: [EmojiCategory: Int] = [:]
+        
+        // Initialize category counts
+        for category in EmojiCategory.allCases {
+            categoryCounts[category] = 0
+        }
+        
+        // Initialize sender emoji usage
+        let senders = Set(messages.map { $0.sender }).filter { !$0.isEmpty }
+        for sender in senders {
+            senderEmojiUsage[sender] = []
+        }
+        
+        // Analyze each message
+        for message in messages {
+            let emojis = extractEmojisFromText(message.content)
+            
+            // Count emojis by date
+            let dateKey = Calendar.current.startOfDay(for: message.timestamp)
+            emojiTrendOverTime[dateKey, default: 0] += emojis.count
+            
+            // Count emojis globally and by sender
+            for emoji in emojis {
+                emojiCounts[emoji, default: 0] += 1
+                
+                // Categorize emoji
+                let category = categorizeEmoji(emoji)
+                categoryCounts[category, default: 0] += 1
+                
+                // Track by sender
+                if let existingUsage = senderEmojiUsage[message.sender]?.first(where: { $0.emoji == emoji }) {
+                    // Update existing usage count
+                    if let index = senderEmojiUsage[message.sender]?.firstIndex(where: { $0.emoji == emoji }) {
+                        senderEmojiUsage[message.sender]?[index] = EmojiUsage(
+                            emoji: emoji,
+                            count: existingUsage.count + 1,
+                            sender: message.sender,
+                            category: category
+                        )
+                    }
+                } else {
+                    // Add new emoji usage
+                    senderEmojiUsage[message.sender, default: []].append(
+                        EmojiUsage(emoji: emoji, count: 1, sender: message.sender, category: category)
+                    )
+                }
+            }
+        }
+        
+        // Find most used emoji
+        let mostUsedEmoji = emojiCounts.max { $0.value < $1.value }?.key ?? ""
+        let mostUsedEmojiCount = emojiCounts[mostUsedEmoji] ?? 0
+        
+        // Calculate love and laughter emoji counts
+        let loveEmojiCount = categoryCounts[.love] ?? 0
+        let laughterEmojiCount = categoryCounts[.laughter] ?? 0
+        
+        // Find romantic day (day with most love emojis)
+        var romanticDay: Date?
+        var maxLoveEmojis = 0
+        for (date, count) in emojiTrendOverTime {
+            let dayMessages = messages.filter { Calendar.current.isDate($0.timestamp, inSameDayAs: date) }
+            let dayLoveEmojis = dayMessages.flatMap { extractEmojisFromText($0.content) }
+                .filter { categorizeEmoji($0) == .love }
+                .count
+            
+            if dayLoveEmojis > maxLoveEmojis {
+                maxLoveEmojis = dayLoveEmojis
+                romanticDay = date
+            }
+        }
+        
+        // Calculate laughter ratio
+        let totalMessages = messages.count
+        let laughterRatio = totalMessages > 0 ? Double(laughterEmojiCount) / Double(totalMessages) : 0.0
+        
+        return EmojiAnalysis(
+            totalEmojis: emojiCounts.values.reduce(0, +),
+            mostUsedEmoji: mostUsedEmoji,
+            mostUsedEmojiCount: mostUsedEmojiCount,
+            categoryDistribution: categoryCounts,
+            senderEmojiUsage: senderEmojiUsage,
+            emojiTrendOverTime: emojiTrendOverTime,
+            loveEmojiCount: loveEmojiCount,
+            laughterEmojiCount: laughterEmojiCount,
+            romanticDay: romanticDay,
+            laughterRatio: laughterRatio
+        )
+    }
+    
+    // MARK: - Helper Methods
+    private static func extractEmojisFromText(_ text: String) -> [String] {
+        let emojiPattern = "[\\p{So}\\p{Cn}]"
+        let regex = try? NSRegularExpression(pattern: emojiPattern, options: [])
+        let range = NSRange(location: 0, length: text.utf16.count)
+        
+        var emojis: [String] = []
+        regex?.enumerateMatches(in: text, options: [], range: range) { match, _, _ in
+            if let matchRange = match?.range {
+                let emoji = (text as NSString).substring(with: matchRange)
+                if emoji.unicodeScalars.allSatisfy({ $0.properties.isEmoji }) {
+                    emojis.append(emoji)
+                }
+            }
+        }
+        return emojis
+    }
+    
+    private static func categorizeEmoji(_ emoji: String) -> EmojiCategory {
+        for category in EmojiCategory.allCases {
+            if category.emojis.contains(emoji) {
+                return category
+            }
+        }
+        return .neutral
+    }
 }
 
 // MARK: - Date Formatter Extension

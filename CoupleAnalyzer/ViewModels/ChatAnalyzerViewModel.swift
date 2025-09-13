@@ -111,7 +111,7 @@ class ChatAnalyzerViewModel: ObservableObject {
         // Tüm analiz işlemlerini paralel olarak gerçekleştir
         let messageStats = MessageAnalyzer.analyzeMessageStats(messages)
         let senderComparison = MessageAnalyzer.analyzeSenderComparison(messages)
-        let emojiAnalysis = EmojiAnalyzer.analyzeEmojis(messages)
+        let emojiAnalysis = MessageAnalyzer.analyzeEmojis(messages)
         let wordAnalysis = WordAnalyzer.analyzeWords(messages)
         let sentimentAnalysis = WordAnalyzer.analyzeSentiment(messages)
         let relationshipDynamics = RelationshipAnalyzer.analyzeRelationshipDynamics(messages)
