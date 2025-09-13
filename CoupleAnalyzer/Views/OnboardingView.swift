@@ -54,7 +54,7 @@ struct OnboardingView: View {
         if showingMainApp {
             MainView()
         } else if showingPremiumPreview {
-            PremiumPreviewView(onDismiss: { showingPremiumPreview = false })
+            PremiumPreviewPlaceholder(onDismiss: { showingPremiumPreview = false })
         } else {
             GeometryReader { geometry in
                 ZStack {
@@ -345,136 +345,6 @@ struct EnhancedOnboardingPageView: View {
     }
 }
 
-// MARK: - Premium Preview View
-struct PremiumPreviewView: View {
-    let onDismiss: () -> Void
-    @State private var selectedFeature = 0
-    
-    let premiumFeatures = [
-        PremiumFeature(
-            title: "Sınırsız Analiz",
-            description: "İstediğiniz kadar sohbet analiz edin",
-            icon: "infinity.circle.fill",
-            color: .blue
-        ),
-        PremiumFeature(
-            title: "AI Öngörüleri",
-            description: "Yapay zeka ile ilişki öngörüleri",
-            icon: "brain.head.profile",
-            color: .purple
-        ),
-        PremiumFeature(
-            title: "Romantik Özellikler",
-            description: "Aşk mektubu oluşturucu ve hediye önerileri",
-            icon: "heart.text.square.fill",
-            color: .pink
-        ),
-        PremiumFeature(
-            title: "Özel Temalar",
-            description: "Kişiselleştirilebilir arayüz temaları",
-            icon: "paintbrush.fill",
-            color: .orange
-        )
-    ]
-    
-    var body: some View {
-        ZStack {
-            // Background
-            LinearGradient(
-                gradient: Gradient(colors: [Color.orange.opacity(0.8), Color.yellow.opacity(0.6)]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 30) {
-                // Header
-                HStack {
-                    Button("Geri") {
-                        onDismiss()
-                    }
-                    .foregroundColor(.white)
-                    .font(.system(size: 16, weight: .medium))
-                    
-                    Spacer()
-                    
-                    VStack(spacing: 4) {
-                        Text("Premium")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.white)
-                        
-                        Text("Sınırsız Özellikler")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                    
-                    Spacer()
-                    
-                    // Placeholder for symmetry
-                    Color.clear
-                        .frame(width: 40)
-                }
-                .padding(.horizontal, 30)
-                .padding(.top, 60)
-                
-                // Features showcase
-                TabView(selection: $selectedFeature) {
-                    ForEach(0..<premiumFeatures.count, id: \.self) { index in
-                        PremiumFeatureCard(feature: premiumFeatures[index])
-                            .tag(index)
-                    }
-                }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                .frame(height: 300)
-                
-                // Pricing
-                VStack(spacing: 16) {
-                    Text("Özel Fiyat")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
-                    
-                    HStack(spacing: 20) {
-                        VStack(spacing: 4) {
-                            Text("29.99₺")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.white)
-                            Text("Aylık")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.white.opacity(0.8))
-                        }
-                        
-                        VStack(spacing: 4) {
-                            Text("199.99₺")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.white)
-                            Text("Yıllık")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.white.opacity(0.8))
-                        }
-                    }
-                }
-                
-                Spacer()
-                
-                // CTA Button
-                Button("Premium'u Dene") {
-                    // TODO: Implement premium purchase
-                    onDismiss()
-                }
-                .foregroundColor(.orange)
-                .font(.system(size: 18, weight: .bold))
-                .padding(.horizontal, 40)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 30)
-                        .fill(Color.white)
-                        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
-                )
-                .padding(.bottom, 50)
-            }
-        }
-    }
-}
 
 // MARK: - Supporting Views
 struct ParticleView: View {
@@ -521,29 +391,6 @@ struct AnimatedShape: View {
     }
 }
 
-struct PremiumFeatureCard: View {
-    let feature: PremiumFeature
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: feature.icon)
-                .font(.system(size: 60, weight: .light))
-                .foregroundColor(.white)
-            
-            Text(feature.title)
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
-            
-            Text(feature.description)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white.opacity(0.8))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-        }
-        .padding(.horizontal, 30)
-    }
-}
 
 // MARK: - Data Models
 struct OnboardingPage {
@@ -566,11 +413,89 @@ struct OnboardingPage {
     }
 }
 
-struct PremiumFeature {
-    let title: String
-    let description: String
-    let icon: String
-    let color: Color
+// MARK: - Premium Preview Placeholder
+struct PremiumPreviewPlaceholder: View {
+    let onDismiss: () -> Void
+    
+    var body: some View {
+        ZStack {
+            // Background
+            LinearGradient(
+                gradient: Gradient(colors: [Color.orange.opacity(0.8), Color.yellow.opacity(0.6)]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
+            VStack(spacing: 30) {
+                // Header
+                HStack {
+                    Button("Geri") {
+                        onDismiss()
+                    }
+                    .foregroundColor(.white)
+                    .font(.system(size: 16, weight: .medium))
+                    
+                    Spacer()
+                    
+                    VStack(spacing: 4) {
+                        Text("Premium")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(.white)
+                        
+                        Text("Sınırsız Özellikler")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    
+                    Spacer()
+                    
+                    // Placeholder for symmetry
+                    Color.clear
+                        .frame(width: 40)
+                }
+                .padding(.horizontal, 30)
+                .padding(.top, 60)
+                
+                // Content
+                VStack(spacing: 20) {
+                    Image(systemName: "crown.fill")
+                        .font(.system(size: 60, weight: .light))
+                        .foregroundColor(.yellow)
+                    
+                    Text("Premium Özellikler")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                    
+                    Text("Sınırsız analiz, AI öngörüleri ve romantik özellikler ile ilişkinizi yeni seviyeye taşıyın!")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 30)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                
+                Spacer()
+                
+                // CTA Button
+                Button("Premium'u Dene") {
+                    // TODO: Implement premium purchase
+                    onDismiss()
+                }
+                .foregroundColor(.orange)
+                .font(.system(size: 18, weight: .bold))
+                .padding(.horizontal, 40)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 30)
+                        .fill(Color.white)
+                        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                )
+                .padding(.bottom, 50)
+            }
+        }
+    }
 }
 
 #Preview {
