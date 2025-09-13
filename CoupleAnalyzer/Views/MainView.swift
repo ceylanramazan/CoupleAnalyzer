@@ -80,6 +80,7 @@ struct MainView: View {
             DocumentPicker { url in
                 // File analysis işlemi
                 print("File selected: \(url)")
+                viewModel.analyzeFile(url: url)
             }
         }
         .sheet(isPresented: $showingPremium) {

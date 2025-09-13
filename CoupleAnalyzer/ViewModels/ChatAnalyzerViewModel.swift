@@ -67,6 +67,42 @@ class ChatAnalyzerViewModel: ObservableObject {
         }
     }
     
+    /// Dosya URL'sinden analiz yap
+    func analyzeFile(url: URL) {
+        isLoading = true
+        errorMessage = nil
+        currentStep = .analyzing
+        
+        analysisQueue.async { [weak self] in
+            guard let self = self else { return }
+            
+            do {
+                // Dosyayı oku
+                let content = try String(contentsOf: url, encoding: .utf8)
+                
+                // WhatsApp formatını parse et
+                let parsedMessages = WhatsAppParser.parseWhatsAppExport(content)
+                
+                // Analiz işlemlerini gerçekleştir
+                let analysisResult = self.performAnalysis(messages: parsedMessages)
+                
+                DispatchQueue.main.async {
+                    self.messages = parsedMessages
+                    self.analysisResult = analysisResult
+                    self.isLoading = false
+                    self.currentStep = .results
+                    self.showingResults = true
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Dosya okuma hatası: \(error.localizedDescription)"
+                    self.isLoading = false
+                    self.currentStep = .error
+                }
+            }
+        }
+    }
+    
     /// Mock data ile analiz yap (preview için)
     func analyzeWithMockData() {
         isLoading = true
