@@ -26,7 +26,7 @@ struct MainView: View {
                 VStack(spacing: 0) {
                     // Hero Section
                     HeroSection(animateHero: $animateHero)
-                        .padding(.top, 60)
+                        .padding(.top, 20)
                         .padding(.bottom, 40)
                     
                     // Main Action Card
@@ -102,7 +102,7 @@ struct HeroSection: View {
     @State private var heartBeat = false
     
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 16) {
             // App Icon with Animation
             ZStack {
                 // Glow effect
@@ -147,7 +147,7 @@ struct HeroSection: View {
             .opacity(animateHero ? 1.0 : 0.0)
             
             // Title and Description
-            VStack(spacing: 16) {
+            VStack(spacing: 12) {
                 Text("CoupleAnalyzer")
                     .font(.system(size: 36, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
@@ -180,7 +180,7 @@ struct MainActionCard: View {
     @State private var isPressed = false
     
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 20) {
             // Card Header
             VStack(spacing: 12) {
                 Image(systemName: "doc.text.magnifyingglass")
