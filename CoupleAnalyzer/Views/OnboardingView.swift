@@ -4,7 +4,6 @@ struct OnboardingView: View {
     @State private var currentPage = 0
     @State private var showingMainApp = false
     @State private var showingPremiumPreview = false
-    @State private var dragOffset: CGFloat = 0
     @State private var isAnimating = false
     
     let onboardingPages = [
@@ -87,22 +86,6 @@ struct OnboardingView: View {
                     }
                     
                     VStack(spacing: 0) {
-                        // Enhanced page indicator with premium styling
-                        HStack(spacing: 12) {
-                            ForEach(0..<onboardingPages.count, id: \.self) { index in
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(index == currentPage ? Color.white : Color.white.opacity(0.3))
-                                    .frame(width: index == currentPage ? 32 : 8, height: 8)
-                                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: currentPage)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                                    )
-                            }
-                        }
-                        .padding(.top, 60)
-                        .padding(.bottom, 40)
-                        
                         // Main content with enhanced transitions
                         TabView(selection: $currentPage) {
                             ForEach(0..<onboardingPages.count, id: \.self) { index in
@@ -117,10 +100,8 @@ struct OnboardingView: View {
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                         .animation(.easeInOut(duration: 0.8), value: currentPage)
                         
-                        Spacer()
-                        
-                        // Enhanced navigation with premium preview
-                        VStack(spacing: 16) {
+                        // Enhanced page indicator at bottom with premium styling
+                        VStack(spacing: 20) {
                             // Premium preview button for page 3
                             if currentPage == 3 {
                                 Button(action: {
@@ -153,46 +134,34 @@ struct OnboardingView: View {
                                 .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimating)
                             }
                             
-                            // Navigation buttons
-                            HStack {
-                                if currentPage > 0 {
-                                    Button("Geri") {
-                                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                                            currentPage -= 1
-                                        }
-                                    }
-                                    .foregroundColor(.white.opacity(0.8))
-                                    .font(.system(size: 16, weight: .medium))
+                            // Page indicator moved to bottom
+                            HStack(spacing: 12) {
+                                ForEach(0..<onboardingPages.count, id: \.self) { index in
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(index == currentPage ? Color.white : Color.white.opacity(0.3))
+                                        .frame(width: index == currentPage ? 32 : 8, height: 8)
+                                        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: currentPage)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                        )
                                 }
-                                
-                                Spacer()
-                                
-                                if currentPage < onboardingPages.count - 1 {
-                                    Button("İleri") {
-                                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                                            currentPage += 1
-                                        }
+                            }
+                            
+                            // Start button only on last page
+                            if currentPage == onboardingPages.count - 1 {
+                                Button(action: {
+                                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                        showingMainApp = true
+                                    }
+                                }) {
+                                    HStack(spacing: 12) {
+                                        Text("Başla")
+                                            .font(.system(size: 18, weight: .bold))
+                                        Image(systemName: "arrow.right")
+                                            .font(.system(size: 16, weight: .bold))
                                     }
                                     .foregroundColor(.white)
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical, 12)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 25)
-                                            .fill(Color.white.opacity(0.2))
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 25)
-                                                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                                            )
-                                    )
-                                } else {
-                                    Button("Başla") {
-                                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                                            showingMainApp = true
-                                        }
-                                    }
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 18, weight: .bold))
                                     .padding(.horizontal, 32)
                                     .padding(.vertical, 16)
                                     .background(
@@ -208,7 +177,6 @@ struct OnboardingView: View {
                                     )
                                 }
                             }
-                            .padding(.horizontal, 30)
                         }
                         .padding(.bottom, 50)
                     }
@@ -233,121 +201,126 @@ struct EnhancedOnboardingPageView: View {
     @State private var featuresOffset: CGFloat = 20
     
     var body: some View {
-        VStack(spacing: 40) {
-            Spacer()
-            
-            // Enhanced animated icon with premium styling
-            ZStack {
-                // Glow effect
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            gradient: Gradient(colors: [Color.white.opacity(0.3), Color.clear]),
-                            center: .center,
-                            startRadius: 0,
-                            endRadius: 80
+        ScrollView {
+            VStack(spacing: 30) {
+                Spacer(minLength: 60)
+                
+                // Enhanced animated icon with premium styling
+                ZStack {
+                    // Glow effect
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                gradient: Gradient(colors: [Color.white.opacity(0.3), Color.clear]),
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: 80
+                            )
                         )
-                    )
-                    .frame(width: 160, height: 160)
-                    .blur(radius: 20)
+                        .frame(width: 160, height: 160)
+                        .blur(radius: 20)
+                    
+                    // Main icon container
+                    Circle()
+                        .fill(Color.white.opacity(0.1))
+                        .frame(width: 120, height: 120)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(0.2), lineWidth: 2)
+                        )
+                    
+                    // Icon with premium styling
+                    Image(systemName: page.icon)
+                        .font(.system(size: 50, weight: .light))
+                        .foregroundColor(.white)
+                        .scaleEffect(iconScale)
+                        .shadow(color: .white.opacity(0.5), radius: 10, x: 0, y: 0)
+                    
+                    // Premium badge for premium page
+                    if page.isPremium {
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Image(systemName: "crown.fill")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.yellow)
+                                    .padding(8)
+                                    .background(
+                                        Circle()
+                                            .fill(Color.white)
+                                            .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+                                    )
+                            }
+                            Spacer()
+                        }
+                        .frame(width: 120, height: 120)
+                    }
+                }
+                .onAppear {
+                    withAnimation(.spring(response: 0.8, dampingFraction: 0.6).delay(0.2)) {
+                        iconScale = 1.0
+                    }
+                }
                 
-                // Main icon container
-                Circle()
-                    .fill(Color.white.opacity(0.1))
-                    .frame(width: 120, height: 120)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.white.opacity(0.2), lineWidth: 2)
-                    )
-                
-                // Icon with premium styling
-                Image(systemName: page.icon)
-                    .font(.system(size: 50, weight: .light))
+                // Enhanced title with better typography - NO TRUNCATION
+                Text(page.title)
+                    .font(.system(size: min(28, geometry.size.width * 0.07), weight: .bold, design: .rounded))
+                    .multilineTextAlignment(.center)
                     .foregroundColor(.white)
-                    .scaleEffect(iconScale)
-                    .shadow(color: .white.opacity(0.5), radius: 10, x: 0, y: 0)
+                    .padding(.horizontal, 20)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .offset(y: titleOffset)
+                    .onAppear {
+                        withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.4)) {
+                            titleOffset = 0
+                        }
+                    }
                 
-                // Premium badge for premium page
-                if page.isPremium {
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "crown.fill")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.yellow)
-                                .padding(8)
-                                .background(
-                                    Circle()
-                                        .fill(Color.white)
-                                        .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
-                                )
+                // Enhanced description - NO TRUNCATION
+                Text(page.description)
+                    .font(.system(size: min(18, geometry.size.width * 0.045), weight: .medium))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.white.opacity(0.9))
+                    .padding(.horizontal, 30)
+                    .lineSpacing(6)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .offset(y: descriptionOffset)
+                    .onAppear {
+                        withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.6)) {
+                            descriptionOffset = 0
                         }
-                        Spacer()
                     }
-                    .frame(width: 120, height: 120)
-                }
-            }
-            .onAppear {
-                withAnimation(.spring(response: 0.8, dampingFraction: 0.6).delay(0.2)) {
-                    iconScale = 1.0
-                }
-            }
-            
-            // Enhanced title with better typography
-            Text(page.title)
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .multilineTextAlignment(.center)
-                .foregroundColor(.white)
-                .padding(.horizontal, 20)
-                .offset(y: titleOffset)
-                .onAppear {
-                    withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.4)) {
-                        titleOffset = 0
-                    }
-                }
-            
-            // Enhanced description
-            Text(page.description)
-                .font(.system(size: 18, weight: .medium))
-                .multilineTextAlignment(.center)
-                .foregroundColor(.white.opacity(0.9))
-                .padding(.horizontal, 30)
-                .lineSpacing(6)
-                .offset(y: descriptionOffset)
-                .onAppear {
-                    withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.6)) {
-                        descriptionOffset = 0
-                    }
-                }
-            
-            // Feature highlights
-            if !page.features.isEmpty {
-                VStack(spacing: 12) {
-                    ForEach(Array(page.features.enumerated()), id: \.offset) { index, feature in
-                        HStack(spacing: 12) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(page.accentColor)
-                            
-                            Text(feature)
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(.white.opacity(0.9))
-                            
-                            Spacer()
-                        }
-                        .padding(.horizontal, 20)
-                        .offset(y: featuresOffset)
-                        .onAppear {
-                            withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.8 + Double(index) * 0.1)) {
-                                featuresOffset = 0
+                
+                // Feature highlights - NO TRUNCATION
+                if !page.features.isEmpty {
+                    VStack(spacing: 12) {
+                        ForEach(Array(page.features.enumerated()), id: \.offset) { index, feature in
+                            HStack(spacing: 12) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(page.accentColor)
+                                
+                                Text(feature)
+                                    .font(.system(size: min(16, geometry.size.width * 0.04), weight: .medium))
+                                    .foregroundColor(.white.opacity(0.9))
+                                    .fixedSize(horizontal: false, vertical: true)
+                                
+                                Spacer()
+                            }
+                            .padding(.horizontal, 20)
+                            .offset(y: featuresOffset)
+                            .onAppear {
+                                withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.8 + Double(index) * 0.1)) {
+                                    featuresOffset = 0
+                                }
                             }
                         }
                     }
+                    .padding(.horizontal, 30)
                 }
-                .padding(.horizontal, 30)
+                
+                Spacer(minLength: 100)
             }
-            
-            Spacer()
         }
         .onAppear {
             // Reset animations when page changes
