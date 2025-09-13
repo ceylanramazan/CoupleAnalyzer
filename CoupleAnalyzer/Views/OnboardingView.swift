@@ -416,85 +416,463 @@ struct OnboardingPage {
 // MARK: - Premium Preview Placeholder
 struct PremiumPreviewPlaceholder: View {
     let onDismiss: () -> Void
+    @State private var currentFeatureIndex = 0
+    @State private var isAnimating = false
+    
+    let premiumFeatures = [
+        PremiumFeatureData(
+            icon: "infinity.circle.fill",
+            title: "Sınırsız Analiz",
+            description: "İstediğiniz kadar sohbet analiz edin",
+            color: .blue
+        ),
+        PremiumFeatureData(
+            icon: "brain.head.profile",
+            title: "AI Öngörüleri",
+            description: "Yapay zeka ile ilişki öngörüleri",
+            color: .purple
+        ),
+        PremiumFeatureData(
+            icon: "heart.text.square.fill",
+            title: "Romantik Özellikler",
+            description: "Aşk mektubu oluşturucu ve hediye önerileri",
+            color: .pink
+        ),
+        PremiumFeatureData(
+            icon: "paintbrush.fill",
+            title: "Özel Temalar",
+            description: "Kişiselleştirilebilir arayüz temaları",
+            color: .orange
+        )
+    ]
     
     var body: some View {
-        ZStack {
-            // Background
-            LinearGradient(
-                gradient: Gradient(colors: [Color.orange.opacity(0.8), Color.yellow.opacity(0.6)]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 30) {
-                // Header
-                HStack {
-                    Button("Geri") {
-                        onDismiss()
+        GeometryReader { geometry in
+            ZStack {
+                // Enhanced Background with multiple gradients
+                ZStack {
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.purple.opacity(0.8),
+                            Color.pink.opacity(0.7),
+                            Color.orange.opacity(0.6)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    
+                    // Animated background shapes
+                    ForEach(0..<5, id: \.self) { index in
+                        Circle()
+                            .fill(Color.white.opacity(0.1))
+                            .frame(width: CGFloat.random(in: 100...300))
+                            .position(
+                                x: CGFloat.random(in: 0...geometry.size.width),
+                                y: CGFloat.random(in: 0...geometry.size.height)
+                            )
+                            .animation(
+                                Animation.easeInOut(duration: Double.random(in: 3...6))
+                                    .repeatForever(autoreverses: true)
+                                    .delay(Double.random(in: 0...2)),
+                                value: isAnimating
+                            )
                     }
+                }
+                .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(spacing: 0) {
+                        // Enhanced Header
+                        HStack {
+                            Button(action: onDismiss) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "chevron.left")
+                                        .font(.system(size: 16, weight: .semibold))
+                                    Text("Geri")
+                                        .font(.system(size: 16, weight: .medium))
+                                }
+                                .foregroundColor(.white)
+                            }
+                            
+                            Spacer()
+                            
+                            VStack(spacing: 4) {
+                                Text("Premium")
+                                    .font(.system(size: 28, weight: .bold))
+                                    .foregroundColor(.white)
+                                
+                                Text("Sınırsız Özellikler")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.8))
+                            }
+                            
+                            Spacer()
+                            
+                            Color.clear
+                                .frame(width: 60)
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.top, 60)
+                        
+                        // Hero Section
+                        VStack(spacing: 24) {
+                            // Premium Badge with Animation
+                            HStack(spacing: 12) {
+                                Image(systemName: "crown.fill")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundColor(.yellow)
+                                    .scaleEffect(isAnimating ? 1.2 : 1.0)
+                                    .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimating)
+                                
+                                Text("Premium Üyelik")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white.opacity(0.2))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 25)
+                                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                    )
+                            )
+                            
+                            // Main Message
+                            VStack(spacing: 16) {
+                                Text("İlişkinizi Yeni Seviyeye Taşıyın")
+                                    .font(.system(size: 32, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                
+                                Text("AI destekli analizler, romantik özellikler ve sınırsız analiz hakkı ile ilişkinizi daha iyi anlayın.")
+                                    .font(.system(size: 18, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.9))
+                                    .multilineTextAlignment(.center)
+                                    .lineSpacing(4)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.horizontal, 20)
+                            }
+                            
+                            // Free Trial Badge
+                            HStack(spacing: 8) {
+                                Image(systemName: "gift.fill")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                
+                                Text("7 Gün Ücretsiz Deneme")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(Color.green.opacity(0.8))
+                            )
+                        }
+                        .padding(.top, 20)
+                        
+                        // Feature Showcase
+                        VStack(spacing: 24) {
+                            Text("Premium Özellikler")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            LazyVGrid(columns: [
+                                GridItem(.flexible()),
+                                GridItem(.flexible())
+                            ], spacing: 16) {
+                                ForEach(Array(premiumFeatures.enumerated()), id: \.offset) { index, feature in
+                                    PremiumFeatureCard(feature: feature, index: index)
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                        .padding(.top, 40)
+                        
+                        // Pricing Section
+                        VStack(spacing: 20) {
+                            Text("Planınızı Seçin")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            VStack(spacing: 16) {
+                                // Yearly Plan (Popular)
+                                PremiumPlanCard(
+                                    title: "Yıllık",
+                                    price: "199.99₺",
+                                    period: "yıl",
+                                    originalPrice: "359.88₺",
+                                    discount: "44% İndirim",
+                                    isPopular: true
+                                )
+                                
+                                // Monthly Plan
+                                PremiumPlanCard(
+                                    title: "Aylık",
+                                    price: "29.99₺",
+                                    period: "ay",
+                                    originalPrice: nil,
+                                    discount: nil,
+                                    isPopular: false
+                                )
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                        .padding(.top, 40)
+                        
+                        // Testimonials
+                        VStack(spacing: 20) {
+                            Text("Kullanıcı Yorumları")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            TabView(selection: $currentFeatureIndex) {
+                                ForEach(0..<3, id: \.self) { index in
+                                    PremiumTestimonialCard(index: index)
+                                        .tag(index)
+                                }
+                            }
+                            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                            .frame(height: 200)
+                            
+                            // Page indicator
+                            HStack(spacing: 8) {
+                                ForEach(0..<3, id: \.self) { index in
+                                    Circle()
+                                        .fill(index == currentFeatureIndex ? Color.white : Color.white.opacity(0.3))
+                                        .frame(width: 8, height: 8)
+                                }
+                            }
+                        }
+                        .padding(.top, 40)
+                        
+                        // CTA Button
+                        VStack(spacing: 16) {
+                            Button(action: {
+                                // TODO: Implement premium purchase
+                                onDismiss()
+                            }) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "crown.fill")
+                                        .font(.system(size: 18, weight: .bold))
+                                    
+                                    Text("Premium'u Başlat")
+                                        .font(.system(size: 18, weight: .bold))
+                                }
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 56)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 28)
+                                        .fill(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [Color.white, Color.white.opacity(0.9)]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            )
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 28)
+                                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                                        )
+                                )
+                            }
+                            .padding(.horizontal, 20)
+                            
+                            // Terms
+                            Text("7 gün ücretsiz deneme, sonrasında 199.99₺/yıl")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.white.opacity(0.7))
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.horizontal, 40)
+                        }
+                        .padding(.top, 40)
+                        .padding(.bottom, 50)
+                    }
+                }
+            }
+        }
+        .onAppear {
+            isAnimating = true
+        }
+    }
+}
+
+// MARK: - Supporting Views
+struct PremiumFeatureData {
+    let icon: String
+    let title: String
+    let description: String
+    let color: Color
+}
+
+struct PremiumFeatureCard: View {
+    let feature: PremiumFeatureData
+    let index: Int
+    @State private var isAnimating = false
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            // Icon
+            ZStack {
+                Circle()
+                    .fill(Color.white.opacity(0.2))
+                    .frame(width: 60, height: 60)
+                
+                Image(systemName: feature.icon)
+                    .font(.system(size: 24, weight: .semibold))
                     .foregroundColor(.white)
-                    .font(.system(size: 16, weight: .medium))
-                    
-                    Spacer()
-                    
-                    VStack(spacing: 4) {
-                        Text("Premium")
-                            .font(.system(size: 24, weight: .bold))
+            }
+            .scaleEffect(isAnimating ? 1.1 : 1.0)
+            .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimating)
+            
+            // Content
+            VStack(spacing: 8) {
+                Text(feature.title)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                
+                Text(feature.description)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.white.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                )
+        )
+        .onAppear {
+            withAnimation(.easeInOut(duration: 0.5).delay(Double(index) * 0.1)) {
+                isAnimating = true
+            }
+        }
+    }
+}
+
+struct PremiumPlanCard: View {
+    let title: String
+    let price: String
+    let period: String
+    let originalPrice: String?
+    let discount: String?
+    let isPopular: Bool
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(title)
+                            .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.white)
                         
-                        Text("Sınırsız Özellikler")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
+                        if isPopular {
+                            Text("Popüler")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(.orange)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.white)
+                                )
+                        }
+                        
+                        Spacer()
                     }
                     
-                    Spacer()
+                    HStack(alignment: .bottom, spacing: 4) {
+                        Text(price)
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundColor(.white)
+                        
+                        Text("/ \(period)")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.7))
+                        
+                        Spacer()
+                    }
                     
-                    // Placeholder for symmetry
-                    Color.clear
-                        .frame(width: 40)
-                }
-                .padding(.horizontal, 30)
-                .padding(.top, 60)
-                
-                // Content
-                VStack(spacing: 20) {
-                    Image(systemName: "crown.fill")
-                        .font(.system(size: 60, weight: .light))
-                        .foregroundColor(.yellow)
-                    
-                    Text("Premium Özellikler")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                    
-                    Text("Sınırsız analiz, AI öngörüleri ve romantik özellikler ile ilişkinizi yeni seviyeye taşıyın!")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white.opacity(0.9))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 30)
-                        .fixedSize(horizontal: false, vertical: true)
+                    if let discount = discount {
+                        Text(discount)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.green)
+                    }
                 }
                 
                 Spacer()
-                
-                // CTA Button
-                Button("Premium'u Dene") {
-                    // TODO: Implement premium purchase
-                    onDismiss()
-                }
-                .foregroundColor(.orange)
-                .font(.system(size: 18, weight: .bold))
-                .padding(.horizontal, 40)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 30)
-                        .fill(Color.white)
-                        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
-                )
-                .padding(.bottom, 50)
             }
         }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(isPopular ? Color.white.opacity(0.2) : Color.white.opacity(0.1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(isPopular ? Color.white : Color.white.opacity(0.3), lineWidth: isPopular ? 2 : 1)
+                )
+        )
+    }
+}
+
+struct PremiumTestimonialCard: View {
+    let index: Int
+    
+    let testimonials = [
+        ("Ayşe & Mehmet", "İlişkimiz hakkında hiç bilmediğimiz şeyleri öğrendik! Çok eğlenceli ve bilgilendirici.", 5),
+        ("Zeynep & Can", "AI öngörüleri gerçekten doğru çıktı. İlişkimizi daha iyi anlıyoruz artık.", 5),
+        ("Elif & Burak", "Aşk mektubu oluşturucu harika! Partnerim çok etkilendi.", 5)
+    ]
+    
+    var body: some View {
+        let testimonial = testimonials[index]
+        
+        VStack(spacing: 16) {
+            // Rating
+            HStack(spacing: 4) {
+                ForEach(0..<testimonial.2, id: \.self) { _ in
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.yellow)
+                }
+            }
+            
+            // Comment
+            Text(testimonial.1)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            // Author
+            Text("- \(testimonial.0)")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.white.opacity(0.8))
+        }
+        .padding(24)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                )
+        )
+        .padding(.horizontal, 20)
     }
 }
 
